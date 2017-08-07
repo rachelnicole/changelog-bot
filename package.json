@@ -1,0 +1,32 @@
+{
+  "name": "changelog-bot",
+  "version": "1.0.0",
+  "description": "A helpful bot for the changelog",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rachelnicole/changelog-bot.git"
+  },
+  "keywords": [
+    "microsoft",
+    "bot",
+    "framework",
+    "nlp",
+    "the",
+    "changelog",
+    "podcast"
+  ],
+  "author": "Rachel White <loveless@gmail.com> (http://rachelisaweso.me)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rachelnicole/changelog-bot/issues"
+  },
+  "homepage": "https://github.com/rachelnicole/changelog-bot#readme",
+  "dependencies": {
+    "botbuilder": "^3.9.0",
+    "restify": "^5.0.1"
+  }
+}
