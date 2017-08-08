@@ -1,54 +1,39 @@
-var request = require("request");
-//var movieApiConfig = require('../movieApiConfig');
+const config = require('../config');
+const pg = require('pg');
+const client = new pg.Client({
+  host: config.HOST,
+  port: config.PORT,
+  user: config.USER,
+  database: config.DATABASE,
+  password: config.PASSWORD,
+  ssl: false
+})
+
 
 module.exports = function (session, args) {
-  console.log('****');
-  console.log(args);
-  console.log('!!!!!');
-  // const movieEntity = args.entities.filter((entity) => entity.type === 'movieTitle');
-  // const characterEntity = args.entities.filter((entity) => entity.type === 'characterName');
+  const podcastEntity = args.entities.filter((entity) => entity.type === 'podcastTitle');
+  let podcastName = podcastEntity.length ? podcastEntity[0].entity : null;
 
-  // const movieTitle = movieEntity.length ? movieEntity[0].entity : null;
-  // const characterName = characterEntity.length ? characterEntity[0].entity : null;
+  const query = {
+    name: 'find-user',
+    text: 'SELECT name FROM podcasts WHERE name ILIKE $1',
+    values: [podcastName]
+  };
 
+  client.connect((err) => {
+    if (err) {
+      throw err;
+    }
+    client.query(query, (err, res) => {
+      if (err) {
+        console.log(err.stack)
+      } else {
+        console.log(res.rows[0])
+      }
+      client.end();
+    });
+  });
 
-  // const teststring = 'intent: actorForRole, movie title: ' + movieTitle + ', character name: ' + characterName;
-  
-  session.send('you asked for a summary of the podcast');
+  session.send('you asked for information on a podcast');
 
-  // const movieSearchUrl = movieApiConfig.movieUrl + 'search/movie/?query=' + movieTitle + '&api_key=' + movieApiConfig.movieKey;
-
-  // request(movieSearchUrl, (error, response, body) => {
-  //   if (!error && response.statusCode == 200) {
-
-  //     const results = JSON.parse(body).results;
-
-  //     if (!results.length) {
-  //       return session.send("I couldn't find the right movie you're asking about.");
-  //     }
-
-  //     // this is a basic placeholder, we should return a set of movies to choose from as chat buttons
-  //     // if (results.length > 1) {
-  //     //     return session.send("I got multiple results, I'm not sure which one to choose.");
-  //     // }
-
-  //     const movieId = results[0].id;
-  //     const movieCreditsUrl = movieApiConfig.movieUrl + 'movie/' + movieId + '/credits?api_key=' + movieApiConfig.movieKey;
-
-  //     request(movieCreditsUrl, (error, response, body) => {
-  //       if (!error && response.statusCode == 200) {
-  //         const findCharacter = JSON.parse(body).cast.filter((c) => c.character.toLowerCase().includes(characterName));
-  //         const character = findCharacter.length ? findCharacter[0] : null;
-  //         if (!character) {
-  //           return session.send("Sorry, I didn't find that character in the movie.");
-  //         }
-  //         session.send("I think the person you're looking for is " + character.name);
-  //       } else {
-  //         session.send("Sorry, something went wrong when I was trying to look up the character in the movie.");
-  //       }
-  //     });
-  //   } else {
-  //     session.send("Sorry, something went wrong when I was looking up the movie.")
-  //   }
-  // });
 };

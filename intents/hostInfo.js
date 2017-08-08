@@ -14,18 +14,18 @@ module.exports = function (session, args) {
   const hostEntity = args.entities.filter((entity) => entity.type === 'podcastHost');
   let hostName = hostEntity.length ? hostEntity[0].entity : null;
 
-  function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
-  };
+  // function toTitleCase(str) {
+  //   return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+  // };
 
-  hostName = toTitleCase(hostName);
+  // hostName = toTitleCase(hostName);
 
-  console.log('|' + hostName + '|');
+  // console.log('|' + hostName + '|');
 
 
   const query = {
     name: 'find-user',
-    text: 'SELECT name FROM people WHERE name = $1',
+    text: 'SELECT name FROM people WHERE name ILIKE $1',
     values: [hostName]
   };
 
