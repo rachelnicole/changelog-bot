@@ -1,16 +1,20 @@
 var request = require("request");
-//var movieApiConfig = require('../movieApiConfig');
 
 module.exports = function (session, args) {
-  // const movieEntity = args.entities.filter((entity) => entity.type === 'movieTitle');
+  console.log('****');
+  console.log(args);
+  console.log('!!!!!');
+  const hostEntity = args.entities.filter((entity) => entity.type === 'podcastHost');
   // const characterEntity = args.entities.filter((entity) => entity.type === 'characterName');
 
-  // const movieTitle = movieEntity.length ? movieEntity[0].entity : null;
+  const hostName = hostEntity.length ? hostEntity[0].entity : null;
   // const characterName = characterEntity.length ? characterEntity[0].entity : null;
 
 
   // const teststring = 'intent: actorForRole, movie title: ' + movieTitle + ', character name: ' + characterName;
   
+  console.log(session);
+  console.log('---------');
   session.send('you asked for information on a host');
 
   // const movieSearchUrl = movieApiConfig.movieUrl + 'search/movie/?query=' + movieTitle + '&api_key=' + movieApiConfig.movieKey;
@@ -37,7 +41,7 @@ module.exports = function (session, args) {
   //         const findCharacter = JSON.parse(body).cast.filter((c) => c.character.toLowerCase().includes(characterName));
   //         const character = findCharacter.length ? findCharacter[0] : null;
   //         if (!character) {
-  //           return session.send("Sorry, I didn't find that character in the movie.");
+  //           return session.send("Sorry, I didn't find that cl mharacter in the movie.");
   //         }
   //         session.send("I think the person you're looking for is " + character.name);
   //       } else {

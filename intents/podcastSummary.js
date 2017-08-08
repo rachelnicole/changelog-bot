@@ -2,6 +2,9 @@ var request = require("request");
 //var movieApiConfig = require('../movieApiConfig');
 
 module.exports = function (session, args) {
+  console.log('****');
+  console.log(args);
+  console.log('!!!!!');
   // const movieEntity = args.entities.filter((entity) => entity.type === 'movieTitle');
   // const characterEntity = args.entities.filter((entity) => entity.type === 'characterName');
 
