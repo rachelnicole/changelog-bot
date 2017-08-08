@@ -27,6 +27,7 @@
   "homepage": "https://github.com/rachelnicole/changelog-bot#readme",
   "dependencies": {
     "botbuilder": "^3.9.0",
+    "pg": "^7.1.0",
     "restify": "^5.0.1"
   }
 }

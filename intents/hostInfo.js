@@ -1,6 +1,11 @@
-const request = require("request");
+const config = require('../config');
 const pg = require('pg');
-const connectionString = config.DATABASE_URL;
+const client = new pg.Client({
+  host: config.HOST,
+  port: config.PORT,
+  user: config.USER,
+  password: config.PASSWORD,
+})
 
 
 module.exports = function (session, args) {
@@ -9,6 +14,15 @@ module.exports = function (session, args) {
   
   console.log(hostName);
   console.log('---------');
+
+  ///client.connect()
+
+  client.query('SELECT name FROM people', function (err, results) {
+    console.log(err);
+    console.log('~~~~~~~~~~');
+    console.log(results);
+  })
+
   session.send('you asked for information on a host');
 
 };
