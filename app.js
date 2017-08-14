@@ -138,24 +138,10 @@ bot.dialog('topicMore', [
 bot.dialog('specificInfo', [
   (session, args, next) => {
     const mainQuery = args.specificIntent;
-    hostInfo(mainQuery);
-    console.log('======');
-    console.log(mainQuery);
-    // if (intent === 'host') {
-    //   session.send('You can choose from `Adam Stacoviak`, `Jerod Santo`, `Erik St. Martin`, `Carlisia Pinto`, `Brian Ketelsen`, `Nadia Eghbal`, `Mikeal Rogers`, `Alex Sexton`, or `Rachel White`?');
-    // } else {
-    //   session.send('You can choose from `the Changelog`, `Go Time`, `Request for Commits`, `Spotlight`, `Founders Talk`, or `JS Party`?');
-    // }
-
-    // prompt user
-//builder.Prompts.text(session, `Which ${intent} would you like to know more about?`);
-  },
-  (session, results, next) => {
-    console.log(results);
-    // const mainQuery = session.dialogData.specificIntent;
-
-    // session.endDialogWithResult({ response: mainQuery });
-
+    hostInfo(mainQuery, function(data) {
+      session.send('Here is the info you requested' + JSON.stringify(data));
+      session.endConversation(`Thanks for chatting, if you have any other questions you know where to find me.`);
+    });
   }
 ]);
 

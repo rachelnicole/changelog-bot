@@ -10,15 +10,9 @@ const client = new pg.Client({
 })
 
 
-module.exports = function (args) {
-  // const hostEntity = args.entities.filter((entity) => entity.type === 'podcastHost');
-  // let hostName = hostEntity.length ? hostEntity[0].entity : null;
+module.exports = function (args, callback) {
 
-  console.log('3333333');
   const hostName = args;
-
-  // console.log('|' + hostName + '|');
-
 
   const query = {
     name: 'find-user',
@@ -33,14 +27,13 @@ module.exports = function (args) {
     }
     client.query(query, (err, res) => {
       const returnData = res.rows[0];
-      
       const completeData = {};
+
       Object.keys(returnData)
       .filter((key) => returnData[key])
       .forEach((key) => completeData[key] = returnData[key])
 
-
-      return completeData;
+      callback(completeData);
     });
   });
 };
