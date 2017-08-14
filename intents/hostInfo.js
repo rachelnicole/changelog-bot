@@ -10,38 +10,37 @@ const client = new pg.Client({
 })
 
 
-module.exports = function (session, args) {
-  const hostEntity = args.entities.filter((entity) => entity.type === 'podcastHost');
-  let hostName = hostEntity.length ? hostEntity[0].entity : null;
+module.exports = function (args) {
+  // const hostEntity = args.entities.filter((entity) => entity.type === 'podcastHost');
+  // let hostName = hostEntity.length ? hostEntity[0].entity : null;
 
-  // function toTitleCase(str) {
-  //   return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
-  // };
-
-  // hostName = toTitleCase(hostName);
+  console.log('3333333');
+  const hostName = args;
 
   // console.log('|' + hostName + '|');
 
 
   const query = {
     name: 'find-user',
-    text: 'SELECT name FROM people WHERE name ILIKE $1',
+    text: 'SELECT name, email, github_handle, twitter_handle, bio, website, slack_id FROM people WHERE name ILIKE $1',
     values: [hostName]
   };
 
   client.connect((err) => {
+    console.log('connected');
     if (err) {
       throw err;
     }
     client.query(query, (err, res) => {
-      if (err) {
-        console.log(err.stack)
-      } else {
-        console.log(res.rows[0])
-      }
+      const returnData = res.rows[0];
+      
+      const completeData = {};
+      Object.keys(returnData)
+      .filter((key) => returnData[key])
+      .forEach((key) => completeData[key] = returnData[key])
+
+
+      return completeData;
     });
   });
-
-  session.send('you asked for information on a host');
-
 };

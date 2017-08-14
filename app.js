@@ -46,10 +46,10 @@ const bot = new builder.UniversalBot(connector, [
 
     // check for a response
     if (results.response) {
-      const age = session.privateConversationData.age = results.response;
-      const name = session.privateConversationData.name;
+      const specificIntent = session.privateConversationData.specificIntent = results.response;
 
-      session.endConversation(`Hello ${name}. You are ${age}`);
+      session.beginDialog('specificInfo', {specificIntent: specificIntent});
+      session.send(`Hello! Please hold on while I get you some more info on ${specificIntent}`);
     } else {
       // no valid response received - End the conversation
       session.endConversation(`Sorry, I didn't understand the response. Let's start over.`);
@@ -61,13 +61,6 @@ const LuisModelUrl = config.luisurl;
 
 // Main dialog with LUIS
 const recognizer = new builder.LuisRecognizer(LuisModelUrl);
-const intents = new builder.IntentDialog({ recognizers: [recognizer] })
-  .matches('hostInfo', hostInfo)
-  .matches('podcastSummary', podcastSummary)
-  .matches('greeting', (session, args) => { session.send('hello i am a friendly bot', session.message.text) })
-  .onDefault((session) => { session.send('Sorry, I did not understand \'%s\'.', session.message.text) });
-
-//bot.dialog('/', intents);
 
 bot.dialog('topicIntent', [
   (session, args, next) => {
@@ -81,10 +74,6 @@ bot.dialog('topicIntent', [
   },
   (session, results, next) => {
     const intent = results.response;
-
-    console.log('#####');
-    console.log(intent);
-    console.log('-----');
 
     if (!intent) {
       // Bad response. Logic for single re-prompt
@@ -143,29 +132,30 @@ bot.dialog('topicMore', [
     const mainQuery = results.response;
 
     session.endDialogWithResult({ response: mainQuery });
+  }
+]);
 
-    // // Basic validation - did we get a response?
-    // if (!age || age < 13 || age > 90) {
-    //   // Bad response. Logic for single re-prompt
-    //   if (session.dialogData.isReprompt) {
-    //     // Re-prompt ocurred
-    //     // Send back empty string
-    //     session.endDialogWithResult({ response: '' });
-    //   } else {
-    //     // Set the flag
-    //     session.dialogData.didReprompt = true;
-    //     session.send(`Sorry, that doesn't look right.`);
-    //     // Call replaceDialog to start the dialog over
-    //     // This will replace the active dialog on the stack
-    //     session.replaceDialog('getAge',
-    //       { name: session.dialogData.name, isReprompt: true });
-    //   }
+bot.dialog('specificInfo', [
+  (session, args, next) => {
+    const mainQuery = args.specificIntent;
+    hostInfo(mainQuery);
+    console.log('======');
+    console.log(mainQuery);
+    // if (intent === 'host') {
+    //   session.send('You can choose from `Adam Stacoviak`, `Jerod Santo`, `Erik St. Martin`, `Carlisia Pinto`, `Brian Ketelsen`, `Nadia Eghbal`, `Mikeal Rogers`, `Alex Sexton`, or `Rachel White`?');
     // } else {
-    //   // Valid city received
-    //   // Return control to calling dialog
-    //   // Pass the city in the response property of results
-    //   session.endDialogWithResult({ response: age });
+    //   session.send('You can choose from `the Changelog`, `Go Time`, `Request for Commits`, `Spotlight`, `Founders Talk`, or `JS Party`?');
     // }
+
+    // prompt user
+//builder.Prompts.text(session, `Which ${intent} would you like to know more about?`);
+  },
+  (session, results, next) => {
+    console.log(results);
+    // const mainQuery = session.dialogData.specificIntent;
+
+    // session.endDialogWithResult({ response: mainQuery });
+
   }
 ]);
 
