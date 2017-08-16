@@ -10,30 +10,30 @@ const client = new pg.Client({
 })
 
 
-module.exports = function (session, args) {
-  const podcastEntity = args.entities.filter((entity) => entity.type === 'podcastTitle');
-  let podcastName = podcastEntity.length ? podcastEntity[0].entity : null;
+module.exports = function (args, callback) {
+
+  const hostName = args;
 
   const query = {
     name: 'find-user',
-    text: 'SELECT name FROM podcasts WHERE name ILIKE $1',
-    values: [podcastName]
+    text: 'SELECT name, email, github_handle, twitter_handle, bio, website, slack_id FROM people WHERE name ILIKE $1',
+    values: [hostName]
   };
 
   client.connect((err) => {
+    console.log('connected');
     if (err) {
       throw err;
     }
     client.query(query, (err, res) => {
-      if (err) {
-        console.log(err.stack)
-      } else {
-        console.log(res.rows[0])
-      }
-      client.end();
+      const returnData = res.rows[0];
+      const completeData = {};
+
+      Object.keys(returnData)
+      .filter((key) => returnData[key])
+      .forEach((key) => completeData[key] = returnData[key])
+
+      callback(completeData);
     });
   });
-
-  session.send('you asked for information on a podcast');
-
 };
