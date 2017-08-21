@@ -1,8 +1,7 @@
 "use strict";
 const builder = require("botbuilder");
 const request = require("request");
-const hostInfo = require('./intents/hostInfo');
-const podcastSummary = require('./intents/podcastSummary');
+const queryDatabase = require('./dbquery');
 const config = require('./config');
 
 // swap out for (process.env.NODE_ENV == 'development')
@@ -107,18 +106,11 @@ bot.dialog('specificInfo', [
   (session, args, next) => {
     const mainQuery = args.specificIntent;
 
-    if (mainTopic == "host") {
-      hostInfo(mainQuery, function(data) {
-        session.send('Here is the info you requested' + JSON.stringify(data));
-        session.endConversation(`Thanks for chatting, if you have any other questions you know where to find me.`);
-      });
-    } else {
-      podcastSummary(mainQuery, function(data) {
-        session.send('Here is the info you requested' + JSON.stringify(data));
-        session.endConversation(`Thanks for chatting, if you have any other questions you know where to find me.`);
-      });
-    }
-  }
+    queryDatabase(mainQuery, mainTopic, function(data) {
+      session.send('Here is the info you requested' + JSON.stringify(data));
+      session.endConversation(`Thanks for chatting, if you have any other questions you know where to find me.`);
+    });
+  },
 ]);
 
 if (useEmulator) {

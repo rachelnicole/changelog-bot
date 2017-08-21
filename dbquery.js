@@ -10,14 +10,21 @@ const client = new pg.Client({
 })
 
 
-module.exports = function (args, callback) {
+module.exports = function (args, topic, callback) {
 
-  const hostName = args;
+  const queryName = args;
+  let query;
 
-  const query = {
+  const hostQuery = {
     name: 'find-user',
     text: 'SELECT name, email, github_handle, twitter_handle, bio, website, slack_id FROM people WHERE name ILIKE $1',
-    values: [hostName]
+    values: [queryName]
+  };
+
+  const podcastQuery = {
+    name: 'find-podcast',
+    text: 'SELECT name, email, github_handle, twitter_handle, bio, website, slack_id FROM people WHERE name ILIKE $1',
+    values: [queryName]
   };
 
   client.connect((err) => {
@@ -25,7 +32,7 @@ module.exports = function (args, callback) {
     if (err) {
       throw err;
     }
-    client.query(query, (err, res) => {
+    client.query(topic == "host" ? hostQuery : podcastQuery, (err, res) => {
       const returnData = res.rows[0];
       const completeData = {};
 
