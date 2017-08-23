@@ -123,4 +123,3 @@ if (useEmulator) {
 } else {
   module.exports = { default: connector.listen() }
 }
-
