@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('./config');
 const pg = require('pg');
 const client = new pg.Client({
   host: config.HOST,
@@ -23,7 +23,7 @@ module.exports = function (args, topic, callback) {
 
   const podcastQuery = {
     name: 'find-podcast',
-    text: 'SELECT name, email, github_handle, twitter_handle, bio, website, slack_id FROM people WHERE name ILIKE $1',
+    text: 'SELECT name, description, twitter_handle, itunes_url FROM podcasts WHERE name ILIKE $1',
     values: [queryName]
   };
 
