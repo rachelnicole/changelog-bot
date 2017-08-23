@@ -52,26 +52,18 @@ bot.dialog('topicIntent', [
   (session, results, next) => {
     const intent = results.response;
 
-    if (!intent) {
-
+    if (!intent || (intent !== "host" && intent !== "podcast")) {
       if (session.dialogData.isReprompt) {
         session.endDialogWithResult({ response: '' });
-      }
-      if (intent !== "host" || "podcast") {
+      } else {
         session.send('Sorry, you can only say `host` or `podcast`.');
-
-        session.replaceDialog('intent', { isReprompt: true });
-      }
-      else {
-
-        session.send('Sorry, you have to use the single word, `host` or `podcast`.');
-
-        session.replaceDialog('intent', { isReprompt: true });
+    
+        session.replaceDialog('topicIntent', { isReprompt: true });
       }
     } else {
-
       session.endDialogWithResult({ response: intent.trim() });
     }
+
   }
 ]);
 
