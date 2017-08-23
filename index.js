@@ -12,8 +12,6 @@ const connector = new builder.ChatConnector({
   appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-let mainTopic = '';
-
 const bot = new builder.UniversalBot(connector, [
   (session, args, next) => {
     session.send(`Hi! I'm a helpful bot to give you more information about podcasts on the Changelog.`);
@@ -23,8 +21,6 @@ const bot = new builder.UniversalBot(connector, [
     if (results.response) {
       const intent = session.privateConversationData.intent = results.response;
 
-      mainTopic = results.response;
-
       session.beginDialog('topicMore', { intent: intent });
     } else {
       session.endConversation(`Sorry, I didn't understand the response. Let's start over.`);
@@ -32,10 +28,11 @@ const bot = new builder.UniversalBot(connector, [
   },
   (session, results, next) => {
     if (results.response) {
-      const specificIntent = session.privateConversationData.specificIntent = results.response;
+      const specificInfo = session.privateConversationData.specificIntent = results.response;
+      const specificIntent = session.privateConversationData.specificIntent = results.intent;
 
-      session.beginDialog('specificInfo', {specificIntent: specificIntent});
-      session.send(`Hello! Please hold on while I get you some more info on ${specificIntent}`);
+      session.beginDialog('specificInfo', {specificInfo: specificInfo, specificIntent: specificIntent});
+      session.send(`Hello! Please hold on while I get you some more info on ${specificInfo}`);
     } else {
 
       session.endConversation(`Sorry, I didn't understand the response. Let's start over.`);
@@ -80,7 +77,7 @@ bot.dialog('topicIntent', [
 
 bot.dialog('topicMore', [
   (session, args, next) => {
-    let intent = session.dialogData.intent = 'User';
+    let intent;
 
     if (args) {
       session.dialogData.isReprompt = args.isReprompt;
@@ -98,13 +95,14 @@ bot.dialog('topicMore', [
   (session, results, next) => {
     const mainQuery = results.response;
 
-    session.endDialogWithResult({ response: mainQuery });
+    session.endDialogWithResult({ response: mainQuery, intent: session.dialogData.intent });
   }
 ]);
 
 bot.dialog('specificInfo', [
   (session, args, next) => {
-    const mainQuery = args.specificIntent;
+    const mainQuery = args.specificInfo;
+    const mainTopic = args.specificIntent;
 
     queryDatabase(mainQuery, mainTopic, function(data) {
       session.send('Here is the info you requested' + JSON.stringify(data));
