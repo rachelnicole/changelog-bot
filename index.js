@@ -63,7 +63,7 @@ bot.dialog('topicIntent', [
     } else {
       session.endDialogWithResult({ response: intent.trim() });
     }
-
+    
   }
 ]);
 
@@ -76,6 +76,7 @@ bot.dialog('topicMore', [
       intent = session.dialogData.intent = args.intent;
     }
 
+    //TODO : rewrite with LUIS intents 
     if (intent === 'host') {
       session.send('You can choose from Adam Stacoviak, Jerod Santo, Erik St. Martin, Carlisia Pinto, Brian Ketelsen, Nadia Eghbal, Mikeal Rogers, Alex Sexton, or Rachel White?');
     } else {
